@@ -21,6 +21,8 @@ public class TravelMap {
     // List of trails, read in the given order
     public List<Trail> trails = new ArrayList<>();
 
+    public Map<Integer, ArrayList<Integer>> safeAdjacencyMatrix = new HashMap<>();
+
     /**
      * Reads the XML file and fills the instance variables locationMap, locations
      * and
@@ -64,18 +66,72 @@ public class TravelMap {
         } catch (IOException | ParserConfigurationException | SAXException e) {
             e.printStackTrace();
         }
+        for (Location location : locations) {
+            safeAdjacencyMatrix.put(location.id, new ArrayList<>());
+        }
     }
 
     public List<Trail> getSafestTrails() {
         List<Trail> safestTrails = new ArrayList<>();
-        // Fill the safestTrail list and return it.
-        // Select the optimal Trails from the Trail list that you have read.
-        // TODO: Your code here
+        Collections.sort(this.trails);
+        for (Trail trail : this.trails) {
+            if (!areConnected(trail.source, trail.destination)) {
+                safestTrails.add(trail);
+
+                ArrayList<Integer> tempList1 = (ArrayList<Integer>) safeAdjacencyMatrix.get(trail.source.id).clone();
+                ArrayList<Integer> tempList2 = (ArrayList<Integer>) safeAdjacencyMatrix.get(trail.destination.id)
+                        .clone();
+
+                if (!tempList1.contains(trail.destination.id)) {
+                    tempList1.add(trail.destination.id);
+                }
+                if (!tempList2.contains(trail.source.id)) {
+                    tempList2.add(trail.source.id);
+                }
+                this.safeAdjacencyMatrix.put(trail.destination.id, tempList2);
+                this.safeAdjacencyMatrix.put(trail.source.id, tempList1);
+            }
+        }
         return safestTrails;
     }
 
+    public boolean areConnected(Location source, Location destination) {
+        // DFS to see if they are connected
+        ArrayList<Location> stack = new ArrayList<>();
+        stack.add(0, source);
+        Set<Integer> visited = new HashSet<>();
+
+        while (!stack.isEmpty()) {
+            Location current = stack.get(0);
+            visited.add(current.id);
+            stack.remove(0);
+            if (current.id == destination.id) {
+                return true;
+            }
+            ArrayList<Integer> neighborsList = safeAdjacencyMatrix.get(current.id);
+            for (int neighbor : neighborsList) {
+                if (!visited.contains(neighbor)) {
+                    stack.add(0, this.locationMap.get(neighbor));
+                }
+
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Prints the given list of safest trails conforming to the given output format.
+     * 
+     * @param safestTrails
+     */
     public void printSafestTrails(List<Trail> safestTrails) {
-        // Print the given list of safest trails conforming to the given output format.
-        // TODO: Your code here
+        int totalDanger = 0;
+        System.out.println("Safest trails are:");
+        for (Trail trail : safestTrails) {
+            totalDanger += trail.danger;
+            System.out.printf("The trail from %s to %s with danger %d\n", trail.source.toString(),
+                    trail.destination.toString(), trail.danger);
+        }
+        System.out.printf("Total danger: %d\n", totalDanger);
     }
 }
