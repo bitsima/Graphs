@@ -71,6 +71,14 @@ public class TravelMap {
         }
     }
 
+    /**
+     * Utilizing Kruskal's algorithm, this method sorts the trails by their danger
+     * levels and adds them to the spanning tree list in ascending order if the new
+     * trail does not form
+     * a cycle.
+     * 
+     * @return safest trails ArrayList
+     */
     public List<Trail> getSafestTrails() {
         List<Trail> safestTrails = new ArrayList<>();
         Collections.sort(this.trails);
@@ -95,6 +103,14 @@ public class TravelMap {
         return safestTrails;
     }
 
+    /**
+     * This method checks if the given two locations are already connected in the
+     * minimum spanning tree and if so returns true, else false.
+     * 
+     * @param source      location
+     * @param destination location
+     * @return areConnected
+     */
     public boolean areConnected(Location source, Location destination) {
         // DFS to see if they are connected
         ArrayList<Location> stack = new ArrayList<>();
