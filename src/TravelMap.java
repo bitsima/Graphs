@@ -118,9 +118,9 @@ public class TravelMap {
         Set<Integer> visited = new HashSet<>();
 
         while (!stack.isEmpty()) {
-            Location current = stack.get(0);
+            Location current = stack.remove(0);
             visited.add(current.id);
-            stack.remove(0);
+
             if (current.id == destination.id) {
                 return true;
             }

@@ -106,9 +106,9 @@ public class Kingdom {
             stack.add(0, cityID);
 
             while (!stack.isEmpty()) {
-                int current = stack.get(0);
+                int current = stack.remove(0);
                 visitedCities.add(current);
-                stack.remove(0);
+
                 if (!newColony.cities.contains(current)) {
                     newColony.cities.add(current);
                 }

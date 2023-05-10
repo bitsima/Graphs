@@ -7,27 +7,83 @@ public class TrapLocator {
         this.colonies = colonies;
     }
 
+    /**
+     * Trap (cycle) positions for each colony are identified with this method. An
+     * empty
+     * list is kept if the colony is safe.
+     * 
+     * @return the list of trap locations for each colony
+     */
     public List<List<Integer>> revealTraps() {
 
-        // Trap positions for each colony, should contain an empty array if the colony is safe.
-        // I.e.:
-        // 0 -> [2, 15, 16, 31]
-        // 1 -> [4, 13, 22]
-        // 3 -> []
-        // ...
         List<List<Integer>> traps = new ArrayList<>();
 
-        // Identify the time traps and save them into the traps variable and then return it.
-        // TODO: Your code here
-
+        for (Colony colony : this.colonies) {
+            List<Integer> trapLocations = searchForTraps(colony);
+            traps.add(trapLocations);
+        }
         return traps;
     }
 
+    /**
+     * Utilizing BFS algorithm and starting a new traversal from each city, cycle
+     * locations are detected and returned as an ArrayList.
+     * 
+     * @param cityID id of the city to start the traversal with
+     * @param colony the colony in which our source city is in.
+     * @return the trap locations as a list
+     */
+    public List<Integer> searchForTraps(Colony colony) {
+        List<Integer> trapList = new ArrayList<>();
+        // starting a new traversal at each city
+        for (int city : colony.cities) {
+            // keeping an ArrayList where we can reach indices of the visited elements.
+            ArrayList<Integer> tempVisitedCities = new ArrayList<>();
+            ArrayList<Integer> queue = new ArrayList<>();
+            queue.add(0, city);
+            while (!queue.isEmpty()) {
+                int current = queue.remove(queue.size() - 1);
+                tempVisitedCities.add(current);
+
+                for (int neighbor : colony.roadNetwork.get(current)) {
+                    if (!tempVisitedCities.contains(neighbor)) {
+                        queue.add(0, neighbor);
+                    } else {
+                        int cycleStart = tempVisitedCities.indexOf(neighbor);
+                        trapList = tempVisitedCities.subList(cycleStart, tempVisitedCities.size());
+                        return trapList;
+                    }
+                }
+            }
+        }
+        return trapList;
+    }
+
+    /**
+     * For each colony, if a time trap was encountered, the cities
+     * that create the trap are printed.
+     * If a time trap was not encountered in this colony, then prints "Safe".
+     * 
+     * @param traps
+     */
     public void printTraps(List<List<Integer>> traps) {
-        // For each colony, if you have encountered a time trap, then print the cities that create the trap.
-        // If you have not encountered a time trap in this colony, then print "Safe".
-        // Print the your findings conforming to the given output format.
-        // TODO: Your code here
+        System.out.println("Danger exploration conclusions:");
+        for (int i = 0; i < colonies.size(); i++) {
+            System.out.printf("Colony %d: ", i + 1);
+            String lineToPrint = "Dangerous. Cities on the dangerous path: [";
+            if (traps.get(i).size() == 0) {
+                lineToPrint = "Safe";
+                System.out.println(lineToPrint);
+                continue;
+            }
+            Collections.sort(traps.get(i));
+            for (int trapCity : traps.get(i)) {
+                lineToPrint += (trapCity + 1) + ", ";
+            }
+            lineToPrint = lineToPrint.substring(0, lineToPrint.length() - 2);
+            lineToPrint += "]";
+            System.out.println(lineToPrint);
+        }
     }
 
 }
