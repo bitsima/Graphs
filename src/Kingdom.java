@@ -78,7 +78,10 @@ public class Kingdom {
         for (int city : adjacencyMatrixUndirected.keySet()) {
             Colony newColony = foundNewColony(city);
             if (newColony != null) {
-                newColony.roadNetwork.put(city, (ArrayList<Integer>) adjacencyMatrixDirected.get(city).clone());
+                for (int integer : newColony.cities) {
+                    newColony.roadNetwork.put(integer,
+                            (ArrayList<Integer>) adjacencyMatrixDirected.get(integer).clone());
+                }
                 colonies.add(newColony);
             }
         }

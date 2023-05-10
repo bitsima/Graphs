@@ -17,7 +17,7 @@ public class Main {
         missionHeader("Finding Hope in the Darkest of Times");
 
         Kingdom kingdom = new Kingdom();
-        kingdom.initializeKingdom("kingdom_input_3.txt");
+        kingdom.initializeKingdom("kingdom_input_1.txt");
         List<Colony> discoveredColonies = kingdom.getColonies();
         kingdom.printColonies(discoveredColonies);
 
