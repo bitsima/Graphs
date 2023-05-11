@@ -7,7 +7,7 @@ public class Main {
         missionHeader("The Path of the Warrior");
 
         TravelMap map = new TravelMap();
-        map.initializeMap("path_of_the_warrior_input_1.xml");
+        map.initializeMap(args[0]);
         List<Trail> safestTrails = map.getSafestTrails();
         map.printSafestTrails(safestTrails);
 
@@ -17,7 +17,7 @@ public class Main {
         missionHeader("Finding Hope in the Darkest of Times");
 
         Kingdom kingdom = new Kingdom();
-        kingdom.initializeKingdom("kingdom_input_1.txt");
+        kingdom.initializeKingdom(args[1]);
         List<Colony> discoveredColonies = kingdom.getColonies();
         kingdom.printColonies(discoveredColonies);
 

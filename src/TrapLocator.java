@@ -7,6 +7,8 @@ public class TrapLocator {
         this.colonies = colonies;
     }
 
+    public List<Integer> trapList = new ArrayList<>();
+
     /**
      * Trap (cycle) positions for each colony are identified with this method. An
      * empty
@@ -19,44 +21,53 @@ public class TrapLocator {
         List<List<Integer>> traps = new ArrayList<>();
 
         for (Colony colony : this.colonies) {
-            List<Integer> trapLocations = searchForTraps(colony);
-            traps.add(trapLocations);
+            trapList.clear();
+
+            for (int city : colony.cities) {
+                searchForTraps(colony, city, new ArrayList<Integer>(),
+                        new ArrayList<Integer>());
+
+                if (!trapList.isEmpty()) {
+                    break;
+                }
+            }
+
+            List<Integer> temp = new ArrayList<>(trapList);
+            traps.add(temp);
         }
         return traps;
     }
 
     /**
-     * Utilizing BFS algorithm and starting a new traversal from each city, cycle
-     * locations are detected and returned as an ArrayList.
+     * Utilizing DFS algorithm recursively, cycle
+     * locations are detected and stored in the global variable {@code trapList}
+     * (which is later cleared for each colony).
      * 
-     * @param cityID id of the city to start the traversal with
-     * @param colony the colony in which our source city is in.
-     * @return the trap locations as a list
+     * @param colony
+     * @param city     traversals source city id
+     * @param visited
+     * @param trapPath
+     * @return whether the trapList is filled or not
      */
-    public List<Integer> searchForTraps(Colony colony) {
-        List<Integer> trapList = new ArrayList<>();
-        // starting a new traversal at each city
-        for (int city : colony.cities) {
-            // keeping an ArrayList where we can reach indices of the visited elements.
-            ArrayList<Integer> tempVisitedCities = new ArrayList<>();
-            ArrayList<Integer> queue = new ArrayList<>();
-            queue.add(0, city);
-            while (!queue.isEmpty()) {
-                int current = queue.remove(queue.size() - 1);
-                tempVisitedCities.add(current);
+    public boolean searchForTraps(Colony colony, int city, List<Integer> visited, List<Integer> trapPath) {
 
-                for (int neighbor : colony.roadNetwork.get(current)) {
-                    if (!tempVisitedCities.contains(neighbor)) {
-                        queue.add(0, neighbor);
-                    } else {
-                        int cycleStart = tempVisitedCities.indexOf(neighbor);
-                        trapList = tempVisitedCities.subList(cycleStart, tempVisitedCities.size());
-                        return trapList;
-                    }
-                }
+        if (trapPath.contains(city)) {
+            trapPath = trapPath.subList(trapPath.indexOf(city), trapPath.size());
+            trapList = trapPath;
+            return true;
+        } else if (visited.contains(city)) {
+            return false;
+        }
+        visited.add(city);
+        trapPath.add(city);
+        for (int neighbor : colony.roadNetwork.get(city)) {
+            if (searchForTraps(colony, neighbor, visited, trapPath)) {
+                return true;
             }
         }
-        return trapList;
+
+        trapPath.remove(Integer.valueOf(city));
+        return false;
     }
 
     /**
