@@ -1,5 +1,6 @@
 # GRAPHS
 Algorithms lab programming assignment 3, 01.05.2023
+
 Graphs - Connected Components, Digraph Traversal and Cycle Detection, Minimum Spanning Trees
 
 In this we've lent a helping hand to our hero Samurai Jack, exploring the possibilities of graphs. The assignment consisted of three parts:
